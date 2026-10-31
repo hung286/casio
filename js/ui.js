@@ -51,6 +51,7 @@ class CasioUI {
         this.historyPanel = document.getElementById("history-panel");
         this.historyList = document.getElementById("history-list");
         this.shortcutPanel = document.getElementById("shortcut-panel");
+        this.backdrop = document.getElementById("panel-backdrop");
     }
 
     initAudio() {
@@ -60,6 +61,25 @@ class CasioUI {
                 this.audioCtx = new AudioContext();
             }
         } catch (e) {}
+
+        // Unlock Web Audio on first user interaction (crucial for iOS Safari & Android Chrome)
+        const unlockAudio = () => {
+            if (this.audioCtx && this.audioCtx.state === "suspended") {
+                this.audioCtx.resume();
+            }
+            window.removeEventListener("pointerdown", unlockAudio);
+            window.removeEventListener("touchstart", unlockAudio);
+        };
+        window.addEventListener("pointerdown", unlockAudio, { passive: true });
+        window.addEventListener("touchstart", unlockAudio, { passive: true });
+    }
+
+    triggerHaptic() {
+        if (navigator && typeof navigator.vibrate === "function") {
+            try {
+                navigator.vibrate(10);
+            } catch (e) {}
+        }
     }
 
     playClickSound() {
@@ -87,12 +107,27 @@ class CasioUI {
     }
 
     bindEvents() {
-        // Calculator button clicks
+        // Calculator button clicks with instant touch & mouse handling
+        let lastTouchTime = 0;
         document.querySelectorAll(".c-btn, .dpad-btn").forEach(btn => {
-            btn.addEventListener("click", (e) => {
+            const press = () => {
                 const action = btn.dataset.action;
                 const value = btn.dataset.val;
                 this.handleButtonPress(action, value, btn);
+            };
+
+            btn.addEventListener("pointerdown", (e) => {
+                if (e.pointerType === "touch" || e.pointerType === "pen") {
+                    lastTouchTime = Date.now();
+                }
+                press();
+            }, { passive: true });
+
+            btn.addEventListener("click", () => {
+                if (Date.now() - lastTouchTime < 450) {
+                    return; // Ignore synthetic click following pointerdown
+                }
+                press();
             });
         });
 
@@ -225,7 +260,13 @@ class CasioUI {
             btnSound.addEventListener("click", () => {
                 this.soundEnabled = !this.soundEnabled;
                 btnSound.classList.toggle("active", this.soundEnabled);
-                btnSound.innerHTML = this.soundEnabled ? "🔊 Âm phím: BẬT" : "🔈 Âm phím: TẮT";
+                const icon = btnSound.querySelector(".btn-icon");
+                const textFull = btnSound.querySelector(".btn-text-full");
+                if (icon) icon.textContent = this.soundEnabled ? "🔊" : "🔇";
+                if (textFull) textFull.textContent = this.soundEnabled ? " Âm: BẬT" : " Âm: TẮT";
+                if (!icon && !textFull) {
+                    btnSound.innerHTML = this.soundEnabled ? "🔊 Âm phím: BẬT" : "🔇 Âm phím: TẮT";
+                }
             });
         }
 
@@ -236,7 +277,12 @@ class CasioUI {
                 let idx = units.indexOf(this.engine.angleUnit);
                 idx = (idx + 1) % units.length;
                 this.engine.setAngleUnit(units[idx]);
-                btnAngle.innerText = `Đơn vị: ${units[idx]}`;
+                const unitText = document.getElementById("angle-unit-text");
+                if (unitText) {
+                    unitText.textContent = units[idx];
+                } else {
+                    btnAngle.innerText = `Đơn vị: ${units[idx]}`;
+                }
                 this.updateScreen();
             });
         }
@@ -248,13 +294,13 @@ class CasioUI {
                 if (body.classList.contains("theme-white")) {
                     body.classList.remove("theme-white");
                     body.classList.add("theme-retro");
-                    btnTheme.innerText = "🎨 Giao diện: Retro";
+                    btnTheme.innerHTML = `<span class="btn-icon">🎨</span><span class="btn-text-full"> Retro</span>`;
                 } else if (body.classList.contains("theme-retro")) {
                     body.classList.remove("theme-retro");
-                    btnTheme.innerText = "🎨 Giao diện: Dark";
+                    btnTheme.innerHTML = `<span class="btn-icon">🎨</span><span class="btn-text-full"> Dark</span>`;
                 } else {
                     body.classList.add("theme-white");
-                    btnTheme.innerText = "🎨 Giao diện: Sáng";
+                    btnTheme.innerHTML = `<span class="btn-icon">🎨</span><span class="btn-text-full"> Sáng</span>`;
                 }
             });
         }
@@ -269,20 +315,37 @@ class CasioUI {
             btnShortcuts.addEventListener("click", () => this.toggleShortcutPanel(true));
         }
 
+        if (this.backdrop) {
+            this.backdrop.addEventListener("click", () => {
+                this.toggleHistoryPanel(false);
+                this.toggleShortcutPanel(false);
+            });
+        }
+
+        const btnClearHist = document.getElementById("btn-clear-history");
+        if (btnClearHist) {
+            btnClearHist.addEventListener("click", (e) => {
+                e.stopPropagation();
+                this.engine.history = [];
+                this.renderHistoryList();
+            });
+        }
+
         document.querySelectorAll(".panel-close").forEach(btn => {
             btn.addEventListener("click", () => {
-                this.historyPanel.classList.remove("open");
-                this.shortcutPanel.classList.remove("open");
+                this.toggleHistoryPanel(false);
+                this.toggleShortcutPanel(false);
             });
         });
     }
 
     handleButtonPress(action, value, btnEl) {
         this.playClickSound();
+        this.triggerHaptic();
 
         if (btnEl) {
             btnEl.classList.add("btn-pressed");
-            setTimeout(() => btnEl.classList.remove("btn-pressed"), 100);
+            setTimeout(() => btnEl.classList.remove("btn-pressed"), 110);
         }
 
         const isShift = this.shiftActive;
@@ -1155,16 +1218,26 @@ class CasioUI {
         if (open) {
             this.renderHistoryList();
             this.historyPanel.classList.add("open");
+            this.shortcutPanel.classList.remove("open");
+            if (this.backdrop) this.backdrop.classList.add("active");
         } else {
             this.historyPanel.classList.remove("open");
+            if (this.backdrop && !this.shortcutPanel.classList.contains("open")) {
+                this.backdrop.classList.remove("active");
+            }
         }
     }
 
     toggleShortcutPanel(open) {
         if (open) {
             this.shortcutPanel.classList.add("open");
+            this.historyPanel.classList.remove("open");
+            if (this.backdrop) this.backdrop.classList.add("active");
         } else {
             this.shortcutPanel.classList.remove("open");
+            if (this.backdrop && !this.historyPanel.classList.contains("open")) {
+                this.backdrop.classList.remove("active");
+            }
         }
     }
 

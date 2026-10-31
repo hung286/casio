@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Casio fx-580VN X">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#1c1d21">
+    <title>CASIO fx-580VN X - ClassWiz Emulator</title>
+    <link rel="stylesheet" href="css/calculator.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%231c1d21'/><text x='50' y='65' font-size='42' font-weight='bold' fill='%23e5b22b' font-family='sans-serif' text-anchor='middle'>fx</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='40' fill='%231c1d21'/><text x='90' y='115' font-size='72' font-weight='bold' fill='%23e5b22b' font-family='sans-serif' text-anchor='middle'>fx</text></svg>">
+</head>
+<body>
+
+    <!-- Top Utility Toolbar -->
+    <header class="app-toolbar">
+        <div class="toolbar-brand">
+            <span>CASIO</span> fx-580VN X
+        </div>
+        <div class="toolbar-actions">
+            <button class="tool-btn" id="btn-sound" title="Bật/Tắt âm phím"><span class="btn-icon">🔊</span><span class="btn-text-full"> Âm: BẬT</span></button>
+            <button class="tool-btn" id="btn-angle-toggle" title="Đổi đơn vị góc (DEG / RAD / GRA)"><span class="btn-icon">📐</span><span class="btn-text-full"> </span><span id="angle-unit-text">DEG</span></button>
+            <button class="tool-btn" id="btn-theme-toggle" title="Đổi giao diện (Dark / Sáng / Retro)"><span class="btn-icon">🎨</span><span class="btn-text-full"> Sáng</span></button>
+            <button class="tool-btn" id="btn-open-history" title="Lịch sử tính toán"><span class="btn-icon">📜</span><span class="btn-text-full"> Lịch sử</span></button>
+            <button class="tool-btn" id="btn-open-shortcuts" title="Hướng dẫn & Phím tắt"><span class="btn-icon">💡</span><span class="btn-text-full"> Trợ giúp</span></button>
+        </div>
+    </header>
+
+    <!-- Main Calculator Unit -->
+    <main class="calculator-wrapper">
+        <div class="casio-body">
+            
+            <!-- Branding Header -->
+            <div class="casio-header">
+                <div class="brand-left">
+                    <span class="casio-logo">CASIO</span>
+                    <span class="classwiz-tag">CLASSWIZ</span>
+                </div>
+                <div class="brand-right">
+                    <span class="model-name">fx-580VN X</span>
+                    <span class="vpam-tag">NATURAL-V.P.A.M.</span>
+                    <div class="solar-panel" title="TWO WAY POWER (Solar & Battery)"></div>
+                </div>
+            </div>
+
+            <!-- Screen Bezel & LCD Display -->
+            <div class="screen-bezel">
+                <div class="lcd-screen" id="lcd-screen">
+                    
+                    <!-- LCD Top Indicators Bar -->
+                    <div class="lcd-status-bar">
+                        <div class="status-left">
+                            <span class="indicator shift-ind" id="ind-shift">S</span>
+                            <span class="indicator alpha-ind" id="ind-alpha">A</span>
+                            <span class="indicator" id="ind-vct">Vct</span>
+                            <span class="indicator" id="ind-mem">M</span>
+                            <span class="indicator" id="ind-sto">STO</span>
+                        </div>
+                        <div class="status-right">
+                            <span class="indicator" id="ind-angle">D</span>
+                            <span class="indicator active" id="ind-math">Math</span>
+                            <span class="indicator" id="ind-up">▲</span>
+                            <span class="indicator" id="ind-down">▼</span>
+                        </div>
+                    </div>
+
+                    <!-- Main Expression & Cursor Area -->
+                    <div class="lcd-expression-area" id="lcd-expression">
+                        <span class="cursor"></span>
+                    </div>
+
+                    <!-- Evaluation Result Area -->
+                    <div class="lcd-result-area" id="lcd-result">0</div>
+
+                    <!-- Dynamic Menu / Solver Overlay on LCD -->
+                    <div class="lcd-menu-overlay" id="lcd-menu-overlay" style="display: none;"></div>
+
+                </div>
+            </div>
+
+            <!-- Authentic fx-580VN X Keypad -->
+            <div class="keypad">
+
+                <!-- Control Row 1: SHIFT, ALPHA, REPLAY D-PAD, MENU/SETUP, ON -->
+                <div class="key-row-top">
+                    <!-- SHIFT -->
+                    <div class="key-unit">
+                        <div class="key-sublabels"></div>
+                        <button class="c-btn btn-shift" data-action="shift">SHIFT</button>
+                    </div>
+
+                    <!-- ALPHA -->
+                    <div class="key-unit">
+                        <div class="key-sublabels"></div>
+                        <button class="c-btn btn-alpha" data-action="alpha">ALPHA</button>
+                    </div>
+
+                    <!-- REPLAY Circular D-Pad -->
+                    <div class="replay-pad-container">
+                        <div class="replay-pad">
+                            <button class="dpad-btn dpad-up" data-action="dpad" data-val="up" title="Lịch sử lên (▲)">▲</button>
+                            <button class="dpad-btn dpad-down" data-action="dpad" data-val="down" title="Lịch sử xuống (▼)">▼</button>
+                            <button class="dpad-btn dpad-left" data-action="dpad" data-val="left" title="Con trỏ trái (◄)">◄</button>
+                            <button class="dpad-btn dpad-right" data-action="dpad" data-val="right" title="Con trỏ phải (►)">►</button>
+                            <span class="replay-center">REPLAY</span>
+                        </div>
+                    </div>
+
+                    <!-- MENU / SETUP -->
+                    <div class="key-unit">
+                        <div class="key-sublabels"><span class="sublabel-shift">SETUP</span></div>
+                        <button class="c-btn btn-func" data-action="menu">MENU</button>
+                    </div>
+
+                    <!-- ON -->
+                    <div class="key-unit">
+                        <div class="key-sublabels"></div>
+                        <button class="c-btn btn-on" data-action="on">ON</button>
+                    </div>
+                </div>
+
+                <!-- Row 2: OPTN, CALC, [Spacer for Replay], ∫dx, x -->
+                <div class="key-row key-row-func">
+                    <div class="key-unit">
+                        <div class="key-sublabels"></div>
+                        <button class="c-btn btn-func" data-action="optn">OPTN</button>
+                    </div>
+                    <div class="key-unit">
+                        <div class="key-sublabels"><span class="sublabel-shift">SOLVE</span><span class="sublabel-alpha">=</span></div>
+                        <button class="c-btn btn-func" data-action="calc" data-val="">CALC</button>
+                    </div>
+                    <div class="key-spacer-center"></div>
+                    <div class="key-unit">
+                        <div class="key-sublabels"><span class="sublabel-shift">d/dx</span><span class="sublabel-alpha">:</span></div>
+                        <button class="c-btn btn-func" data-action="integral" data-val="∫(">∫dx</button>
+                    </div>
+                    <div class="key-unit">
+                        <div class="key-sublabels"><span class="sublabel-shift">Σ</span><span class="sublabel-alpha">∏</span></div>
+                        <button class="c-btn btn-func" data-action="var_x" data-val="x">x</button>
+                    </div>
+                </div>
+
+                <!-- Row 3: 믐, √■, x², x^■, log_■■, ln -->
+                <div class="key-row grid-cols-6">
+                    <div class="key-unit">
+                        <div class="key-sublabels"><span class="sublabel-shift">⌟</span><span class="sublabel-alpha">÷R</span></div>
+                        <button class="c-btn btn-func" data-action="frac" data-val="/">믐</button>
+                    </div>
+                    <div class="key-unit">
+                        <div class="key-sublabels"><span class="sublabel-shift">³√</span></div>
+                        <button class="c-btn btn-func" data-action="sqrt" data-val="sqrt(">√■</button>
+                    </div>
+                    <div class="key-unit">
+                        <div class="key-sublabels"><span class="sublabel-shift">x³</span><span class="sublabel-base">DEC</span></div>
+                        <button class="c-btn btn-func" data-action="pow2" data-val="^2">x²</button>
+                    </div>
+                    <div class="key-unit">
+                        <div class="key-sublabels"><span class="sublabel-shift">^■√■</span><span class="sublabel-base">HEX</span></div>
+                        <button class="c-btn btn-func" data-action="pow" data-val="^">x^■</button>
+                    </div>
+                    <div class="key-unit">
+                        <div class="key-sublabels"><span class="sublabel-shift">10^■</span><span class="sublabel-base">BIN</span></div>
+                        <button class="c-btn btn-func" data-action="logab" data-val="logab(">log_■■</button>
+                    </div>
+                    <div class="key-unit">
+                        <div class="key-sublabels"><span class="sublabel-shift">e^■</span><span class="sublabel-base">OCT</span></div>
+                        <button class="c-btn btn-func" data-action="ln" data-val="ln(">ln</button>
+                    </div>
+                </div>
+
+                <!-- Row 4: (-), ° ' ", x⁻¹, sin, cos, tan -->
+                <div class="key-row grid-cols-6">
+                    <div class="key-unit">
+                        <div class="key-sublabels"><span class="sublabel-shift">log</span><span class="sublabel-alpha">A</span></div>
+                        <button class="c-btn btn-func" data-action="(- )" data-val="-">(-)</button>
+                    </div>
+                    <div class="key-unit">
+                        <div class="key-sublabels"><span class="sublabel-shift">FACT</span><span class="sublabel-alpha">B</span></div>
+                        <button class="c-btn btn-func" data-action="d_m_s" data-val="°">° ' "</button>
+                    </div>
+                    <div class="key-unit">
+                        <div class="key-sublabels"><span class="sublabel-shift">x!</span><span class="sublabel-alpha">C</span></div>
+                        <button class="c-btn btn-func" data-action="x^-1" data-val="^(-1)">x⁻¹</button>
+                    </div>
+                    <div class="key-unit">
+                        <div class="key-sublabels"><span class="sublabel-shift">sin⁻¹</span><span class="sublabel-alpha">D</span></div>
+                        <button class="c-btn btn-func" data-action="sin" data-val="sin(">sin</button>
+                    </div>
+                    <div class="key-unit">
+                        <div class="key-sublabels"><span class="sublabel-shift">cos⁻¹</span><span class="sublabel-alpha">E</span></div>
+                        <button class="c-btn btn-func" data-action="cos" data-val="cos(">cos</button>
+                    </div>
+                    <div class="key-unit">
+                        <div class="key-sublabels"><span class="sublabel-shift">tan⁻¹</span><span class="sublabel-alpha">F</span></div>
+                        <button class="c-btn btn-func" data-action="tan" data-val="tan(">tan</button>
+                    </div>
+                </div>
+
+                <!-- Row 5: STO, ENG, (, ), S<=>D, M+ -->
+                <div class="key-row grid-cols-6">
+                    <div class="key-unit">
+                        <div class="key-sublabels"><span class="sublabel-shift">RECALL</span></div>
+                        <button class="c-btn btn-func" data-action="sto">STO</button>
+                    </div>
+                    <div class="key-unit">
+                        <div class="key-sublabels"><span class="sublabel-shift">r∠θ</span><span class="sublabel-alpha">i</span></div>
+                        <button class="c-btn btn-func" data-action="eng">ENG</button>
+                    </div>
+                    <div class="key-unit">
+                        <div class="key-sublabels"><span class="sublabel-shift">Abs</span><span class="sublabel-alpha">x</span></div>
+                        <button class="c-btn btn-func" data-action="left_paren" data-val="(">(</button>
+                    </div>
+                    <div class="key-unit">
+                        <div class="key-sublabels"><span class="sublabel-shift">,</span><span class="sublabel-alpha">y</span></div>
+                        <button class="c-btn btn-func" data-action="right_paren" data-val=")">)</button>
+                    </div>
+                    <div class="key-unit">
+                        <div class="key-sublabels"><span class="sublabel-shift">a⌟b<=>d/c</span><span class="sublabel-alpha">z</span></div>
+                        <button class="c-btn btn-func" data-action="sd">S⇔D</button>
+                    </div>
+                    <div class="key-unit">
+                        <div class="key-sublabels"><span class="sublabel-shift">M-</span><span class="sublabel-alpha">M</span></div>
+                        <button class="c-btn btn-func" data-action="m_plus" data-val="+M">M+</button>
+                    </div>
+                </div>
+
+                <!-- Row 6: 7, 8, 9, DEL, AC -->
+                <div class="key-row grid-cols-5">
+                    <div class="key-unit">
+                        <div class="key-sublabels"><span class="sublabel-shift">CONST</span></div>
+                        <button class="c-btn btn-num" data-action="num" data-val="7">7</button>
+                    </div>
+                    <div class="key-unit">
+                        <div class="key-sublabels"><span class="sublabel-shift">CONV</span></div>
+                        <button class="c-btn btn-num" data-action="num" data-val="8">8</button>
+                    </div>
+                    <div class="key-unit">
+                        <div class="key-sublabels"><span class="sublabel-shift">RESET</span></div>
+                        <button class="c-btn btn-num" data-action="num" data-val="9">9</button>
+                    </div>
+                    <div class="key-unit">
+                        <div class="key-sublabels"><span class="sublabel-shift">INS</span></div>
+                        <button class="c-btn btn-del" data-action="del">DEL</button>
+                    </div>
+                    <div class="key-unit">
+                        <div class="key-sublabels"><span class="sublabel-shift">OFF</span></div>
+                        <button class="c-btn btn-ac" data-action="ac">AC</button>
+                    </div>
+                </div>
+
+                <!-- Row 7: 4, 5, 6, ×, ÷ -->
+                <div class="key-row grid-cols-5">
+                    <div class="key-unit">
+                        <div class="key-sublabels"><span class="sublabel-shift">MATRIX</span></div>
+                        <button class="c-btn btn-num" data-action="num" data-val="4">4</button>
+                    </div>
+                    <div class="key-unit">
+                        <div class="key-sublabels"><span class="sublabel-shift">VECTOR</span></div>
+                        <button class="c-btn btn-num" data-action="num" data-val="5">5</button>
+                    </div>
+                    <div class="key-unit">
+                        <div class="key-sublabels"></div>
+                        <button class="c-btn btn-num" data-action="num" data-val="6">6</button>
+                    </div>
+                    <div class="key-unit">
+                        <div class="key-sublabels"><span class="sublabel-shift">nPr</span><span class="sublabel-alpha">GCD</span></div>
+                        <button class="c-btn btn-num" data-action="times" data-val="*">×</button>
+                    </div>
+                    <div class="key-unit">
+                        <div class="key-sublabels"><span class="sublabel-shift">nCr</span><span class="sublabel-alpha">LCM</span></div>
+                        <button class="c-btn btn-num" data-action="div" data-val="/">÷</button>
+                    </div>
+                </div>
+
+                <!-- Row 8: 1, 2, 3, +, - -->
+                <div class="key-row grid-cols-5">
+                    <div class="key-unit">
+                        <div class="key-sublabels"></div>
+                        <button class="c-btn btn-num" data-action="num" data-val="1">1</button>
+                    </div>
+                    <div class="key-unit">
+                        <div class="key-sublabels"></div>
+                        <button class="c-btn btn-num" data-action="num" data-val="2">2</button>
+                    </div>
+                    <div class="key-unit">
+                        <div class="key-sublabels"></div>
+                        <button class="c-btn btn-num" data-action="num" data-val="3">3</button>
+                    </div>
+                    <div class="key-unit">
+                        <div class="key-sublabels"><span class="sublabel-shift">Pol</span><span class="sublabel-alpha">Int</span></div>
+                        <button class="c-btn btn-num" data-action="plus" data-val="+">+</button>
+                    </div>
+                    <div class="key-unit">
+                        <div class="key-sublabels"><span class="sublabel-shift">Rec</span><span class="sublabel-alpha">Intg</span></div>
+                        <button class="c-btn btn-num" data-action="minus" data-val="-">−</button>
+                    </div>
+                </div>
+
+                <!-- Row 9: 0, ., ×10^x, Ans, = -->
+                <div class="key-row grid-cols-5">
+                    <div class="key-unit">
+                        <div class="key-sublabels"><span class="sublabel-shift">Rnd</span></div>
+                        <button class="c-btn btn-num" data-action="num" data-val="0">0</button>
+                    </div>
+                    <div class="key-unit">
+                        <div class="key-sublabels"><span class="sublabel-shift">Ran#</span><span class="sublabel-alpha">RanInt#</span></div>
+                        <button class="c-btn btn-num" data-action="dot" data-val=".">.</button>
+                    </div>
+                    <div class="key-unit">
+                        <div class="key-sublabels"><span class="sublabel-shift">π</span><span class="sublabel-alpha">e</span></div>
+                        <button class="c-btn btn-num" data-action="exp" data-val="*10^">×10^x</button>
+                    </div>
+                    <div class="key-unit">
+                        <div class="key-sublabels"><span class="sublabel-shift">%</span><span class="sublabel-alpha">PreAns</span></div>
+                        <button class="c-btn btn-num" data-action="ans" data-val="Ans">Ans</button>
+                    </div>
+                    <div class="key-unit">
+                        <div class="key-sublabels"></div>
+                        <button class="c-btn btn-num" data-action="equals" data-val="=">=</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Dimmed Backdrop for Mobile Panels -->
+    <div class="panel-backdrop" id="panel-backdrop"></div>
+
+    <!-- Side Panel: Calculation History -->
+    <aside class="side-panel side-panel-right" id="history-panel">
+        <div class="panel-header">
+            <span class="panel-title">📜 Lịch Sử Phép Tính</span>
+            <div style="display:flex; align-items:center; gap:8px;">
+                <button class="tool-btn" id="btn-clear-history" title="Xóa toàn bộ lịch sử" style="padding:3px 7px; font-size:11px;">🗑 Xóa</button>
+                <button class="panel-close" id="history-close">&times;</button>
+            </div>
+        </div>
+        <div class="history-list" id="history-list">
+            <!-- Populated via JS -->
+        </div>
+    </aside>
+
+    <!-- Side Panel: Keyboard Shortcuts & Mobile Guide Reference -->
+    <aside class="side-panel side-panel-left" id="shortcut-panel">
+        <div class="panel-header">
+            <span class="panel-title">💡 Hướng Dẫn Sử Dụng</span>
+            <button class="panel-close" id="shortcut-close">&times;</button>
+        </div>
+        <div class="shortcut-list">
+            <div style="color:#e5b22b; font-weight:bold; font-size:12px; margin-bottom:6px; border-bottom:1px solid rgba(229,178,43,0.3); padding-bottom:3px;">📱 Hướng Dẫn Trên Điện Thoại</div>
+            <div class="shortcut-row"><span>Gõ phím</span><span class="shortcut-key">Chạm trực tiếp</span></div>
+            <div class="shortcut-row"><span>Chức năng vàng</span><span class="shortcut-key">Nhấn SHIFT + phím</span></div>
+            <div class="shortcut-row"><span>Chức năng/biến đỏ</span><span class="shortcut-key">Nhấn ALPHA + phím</span></div>
+            <div class="shortcut-row"><span>Chọn chức năng / chế độ</span><span class="shortcut-key">Nhấn phím MENU</span></div>
+            <div class="shortcut-row"><span>Đổi phân số ⇔ số thập phân</span><span class="shortcut-key">Nhấn phím S⇔D</span></div>
+            <div class="shortcut-row"><span>Di chuyển con trỏ</span><span class="shortcut-key">Chạm vào màn hình LCD</span></div>
+
+            <div style="color:#38bdf8; font-weight:bold; font-size:12px; margin-top:14px; margin-bottom:6px; border-bottom:1px solid rgba(56,189,248,0.3); padding-bottom:3px;">⌨ Phím Tắt Trên Máy Tính</div>
+            <div class="shortcut-row"><span>Nhập số 0-9 & dấu</span><span class="shortcut-key">0-9, . , + , - , * , /</span></div>
+            <div class="shortcut-row"><span>Dấu bằng / Tính toán</span><span class="shortcut-key">Enter hoặc =</span></div>
+            <div class="shortcut-row"><span>Xóa 1 ký tự (DEL)</span><span class="shortcut-key">Backspace</span></div>
+            <div class="shortcut-row"><span>Xóa hết (AC)</span><span class="shortcut-key">Delete hoặc Esc</span></div>
+            <div class="shortcut-row"><span>Lũy thừa (^)</span><span class="shortcut-key">^</span></div>
+            <div class="shortcut-row"><span>Căn bậc hai</span><span class="shortcut-key">Q hoặc q</span></div>
+            <div class="shortcut-row"><span>sin, cos, tan</span><span class="shortcut-key">S , C , T</span></div>
+            <div class="shortcut-row"><span>log (cơ số 10)</span><span class="shortcut-key">L</span></div>
+            <div class="shortcut-row"><span>ln (logarit tự nhiên)</span><span class="shortcut-key">N</span></div>
+            <div class="shortcut-row"><span>Biến x</span><span class="shortcut-key">X</span></div>
+            <div class="shortcut-row"><span>Bật/Tắt SHIFT / ALPHA</span><span class="shortcut-key">Shift / Alt</span></div>
+            <div class="shortcut-row"><span>Di chuyển con trỏ</span><span class="shortcut-key">◄ và ►</span></div>
+            <div class="shortcut-row"><span>Duyệt lại lịch sử</span><span class="shortcut-key">▲ và ▼</span></div>
+        </div>
+    </aside>
+
+    <!-- Modal Dialog for Solvers & Features -->
+    <div class="app-modal" id="app-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span id="modal-title" style="font-weight:bold; color:#38bdf8;">Tiêu đề</span>
+                <button class="panel-close" id="modal-close">&times;</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/calc-engine.js"></script>
+    <script src="js/solvers.js"></script>
+    <script src="js/math-tree.js"></script>
+    <script src="js/classwiz-modes.js"></script>
+    <script src="js/ui.js"></script>
+</body>
+</html>
